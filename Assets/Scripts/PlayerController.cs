@@ -23,6 +23,9 @@ public class PlayerController : MonoBehaviour
     public GameObject bulletImpact;
     public float timeBetweenShots = .1f;
     private float shotCounter;
+    public float maxHeat = 10f, heatPerShot = 1f, coolRate = 4f, overHeatCoolRate = 5f;
+    private float heatCounter;
+    private bool overHeated;
 
     // Start is called before the first frame update
     void Start()
@@ -60,15 +63,27 @@ public class PlayerController : MonoBehaviour
 
         characterController.Move(movement * Time.deltaTime);
 
-        if (Input.GetMouseButtonDown(0)) {
-            Shoot();
-        }
-
-        if (Input.GetMouseButton(0)) {
-            shotCounter -= Time.deltaTime;
-            if (shotCounter <= 0) {
+        if (!overHeated) {
+            if (Input.GetMouseButtonDown(0)) {
                 Shoot();
             }
+
+            if (Input.GetMouseButton(0)) {
+                shotCounter -= Time.deltaTime;
+                if (shotCounter <= 0) {
+                    Shoot();
+                }
+            }
+            heatCounter -= coolRate * Time.deltaTime;
+        } else {
+            heatCounter -= overHeatCoolRate * Time.deltaTime;
+            if (heatCounter <= 0) {
+                overHeated = false;
+            }
+        }
+
+        if (heatCounter < 0) {
+            heatCounter = 0; // clamp?, better to not decrement in the previous step instead of this line
         }
 
         if (Input.GetKeyDown(KeyCode.Escape)) {
@@ -97,5 +112,11 @@ public class PlayerController : MonoBehaviour
         }
 
         shotCounter = timeBetweenShots;
+        heatCounter += heatPerShot;
+
+        if (heatCounter >= maxHeat) {
+            heatCounter = maxHeat; // Clamp at addition step?
+            overHeated = true;
+        }
     }
 }
