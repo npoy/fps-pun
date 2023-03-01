@@ -21,6 +21,8 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     public LayerMask groundLayers;
     public GameObject bulletImpact;
+    public float timeBetweenShots = .1f;
+    private float shotCounter;
 
     // Start is called before the first frame update
     void Start()
@@ -58,8 +60,15 @@ public class PlayerController : MonoBehaviour
 
         characterController.Move(movement * Time.deltaTime);
 
-        if(Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0)) {
             Shoot();
+        }
+
+        if (Input.GetMouseButton(0)) {
+            shotCounter -= Time.deltaTime;
+            if (shotCounter <= 0) {
+                Shoot();
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Escape)) {
@@ -86,5 +95,7 @@ public class PlayerController : MonoBehaviour
             GameObject bulletImpactObj = Instantiate(bulletImpact, raycastHit.point + (raycastHit.normal * 0.002f), Quaternion.LookRotation(raycastHit.normal, Vector3.up));
             Destroy(bulletImpactObj, 10f);
         }
+
+        shotCounter = timeBetweenShots;
     }
 }
