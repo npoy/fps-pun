@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         mainCamera = Camera.main;
+        UIController.instance.weaponTempSlider.maxValue = maxHeat;
     }
 
     // Update is called once per frame
@@ -86,6 +87,8 @@ public class PlayerController : MonoBehaviour
         if (heatCounter < 0) {
             heatCounter = 0; // clamp?, better to not decrement in the previous step instead of this line
         }
+
+        UIController.instance.weaponTempSlider.value = heatCounter;
 
         if (Input.GetKeyDown(KeyCode.Escape)) {
             Cursor.lockState = CursorLockMode.None;
