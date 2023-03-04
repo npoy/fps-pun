@@ -79,6 +79,7 @@ public class PlayerController : MonoBehaviour
             heatCounter -= overHeatCoolRate * Time.deltaTime;
             if (heatCounter <= 0) {
                 overHeated = false;
+                UIController.instance.overheatedMessage.gameObject.SetActive(false);
             }
         }
 
@@ -117,6 +118,7 @@ public class PlayerController : MonoBehaviour
         if (heatCounter >= maxHeat) {
             heatCounter = maxHeat; // Clamp at addition step?
             overHeated = true;
+            UIController.instance.overheatedMessage.gameObject.SetActive(true);
         }
     }
 }
