@@ -21,9 +21,8 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     public LayerMask groundLayers;
     public GameObject bulletImpact;
-    public float timeBetweenShots = .1f;
     private float shotCounter;
-    public float maxHeat = 10f, heatPerShot = 1f, coolRate = 4f, overHeatCoolRate = 5f;
+    public float maxHeat = 10f, coolRate = 4f, overHeatCoolRate = 5f;
     private float heatCounter;
     private bool overHeated;
     public Gun[] guns;
@@ -72,7 +71,7 @@ public class PlayerController : MonoBehaviour
                 Shoot();
             }
 
-            if (Input.GetMouseButton(0)) {
+            if (Input.GetMouseButton(0) && guns[selectedGun].isAutomatic) {
                 shotCounter -= Time.deltaTime;
                 if (shotCounter <= 0) {
                     Shoot();
@@ -130,8 +129,8 @@ public class PlayerController : MonoBehaviour
             Destroy(bulletImpactObj, 10f);
         }
 
-        shotCounter = timeBetweenShots;
-        heatCounter += heatPerShot;
+        shotCounter = guns[selectedGun].timeBetweenShots;
+        heatCounter += guns[selectedGun].heatPerShot;
 
         if (heatCounter >= maxHeat) {
             heatCounter = maxHeat; // Clamp at addition step?
