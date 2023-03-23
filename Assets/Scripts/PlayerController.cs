@@ -31,6 +31,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public Gun[] guns;
     private int selectedGun;
 
+    public GameObject playerHitImpact;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -143,9 +145,13 @@ public class PlayerController : MonoBehaviourPunCallbacks
         ray.origin = mainCamera.transform.position;
 
         if (Physics.Raycast(ray, out RaycastHit raycastHit)) {
-            Debug.Log(raycastHit.collider.gameObject.name);
-            GameObject bulletImpactObj = Instantiate(bulletImpact, raycastHit.point + (raycastHit.normal * 0.002f), Quaternion.LookRotation(raycastHit.normal, Vector3.up));
-            Destroy(bulletImpactObj, 10f);
+            if (raycastHit.collider.gameObject.tag == "Player") {
+                PhotonNetwork.Instantiate(playerHitImpact.name, raycastHit.point, Quaternion.identity);
+            } else {
+                // What if I use Quaternion.identity for the regular shots instead of the lookrotation?
+                GameObject bulletImpactObj = Instantiate(bulletImpact, raycastHit.point + (raycastHit.normal * 0.002f), Quaternion.LookRotation(raycastHit.normal, Vector3.up));
+                Destroy(bulletImpactObj, 10f);
+            }
         }
 
         shotCounter = guns[selectedGun].timeBetweenShots;
