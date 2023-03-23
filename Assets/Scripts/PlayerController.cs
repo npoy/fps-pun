@@ -33,6 +33,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     public GameObject playerHitImpact;
 
+    public int maxHealth = 100;
+    private int currentHealth;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -40,6 +43,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
         mainCamera = Camera.main;
         UIController.instance.weaponTempSlider.maxValue = maxHeat;
         SwitchGun();
+
+        currentHealth = maxHealth;
+        UIController.instance.healthSlider.maxValue = maxHealth;
+        UIController.instance.healthSlider.value = currentHealth;
     }
 
     // Update is called once per frame
@@ -147,6 +154,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (Physics.Raycast(ray, out RaycastHit raycastHit)) {
             if (raycastHit.collider.gameObject.tag == "Player") {
                 PhotonNetwork.Instantiate(playerHitImpact.name, raycastHit.point, Quaternion.identity);
+                raycastHit.collider.gameObject.GetPhotonView().RPC("DealDamage", RpcTarget.All, photonView.Owner.NickName, guns[selectedGun].shotDamage);
             } else {
                 // What if I use Quaternion.identity for the regular shots instead of the lookrotation?
                 GameObject bulletImpactObj = Instantiate(bulletImpact, raycastHit.point + (raycastHit.normal * 0.002f), Quaternion.LookRotation(raycastHit.normal, Vector3.up));
@@ -165,6 +173,24 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         guns[selectedGun].muzzleFlash.SetActive(true);
         muzzleCounter = muzzleDisplayTime;
+    }
+
+    [PunRPC]
+    public void DealDamage(string damager, int damageAmount) {
+        TakeDamage(damager, damageAmount);
+    }
+
+    public void TakeDamage(string damager, int damageAmount) {
+        if (photonView.IsMine) {
+            currentHealth -= damageAmount;
+
+            if (currentHealth <= 0) {
+                currentHealth = 0;
+                PlayerSpawner.instance.Die(damager);
+            }
+
+            UIController.instance.healthSlider.value = currentHealth;
+        }
     }
 
     void SwitchGun() {
