@@ -125,6 +125,7 @@ MonoBehaviour:
   playerHitImpact: {fileID: 8948187797392927352, guid: dff30b1bfeb148944a26c2645431b702, type: 3}
   maxHealth: 100
   anim: {fileID: 1046021140975996196}
+  playerModel: {fileID: 1046021140919302975}
 --- !u!143 &2851945008545914744
 CharacterController:
   m_ObjectHideFlags: 0
@@ -564,9 +565,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 38074321d88bbe3438955d413494dac3, type: 3}
---- !u!4 &1046021140919396125 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1046021142964628577, guid: 38074321d88bbe3438955d413494dac3, type: 3}
+--- !u!1 &1046021140919302975 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1046021142964596803, guid: 38074321d88bbe3438955d413494dac3, type: 3}
   m_PrefabInstance: {fileID: 2046348156}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1046021140919302793 stripped
@@ -577,6 +578,11 @@ GameObject:
 --- !u!95 &1046021140975996196 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 1046021142975120984, guid: 38074321d88bbe3438955d413494dac3, type: 3}
+  m_PrefabInstance: {fileID: 2046348156}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1046021140919396125 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1046021142964628577, guid: 38074321d88bbe3438955d413494dac3, type: 3}
   m_PrefabInstance: {fileID: 2046348156}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &907567853622796776
