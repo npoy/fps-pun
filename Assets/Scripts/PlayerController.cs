@@ -39,13 +39,15 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public Animator anim;
     public GameObject playerModel;
 
+    public Transform modelGunPoint, gunHolder; 
+
     // Start is called before the first frame update
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         mainCamera = Camera.main;
         UIController.instance.weaponTempSlider.maxValue = maxHeat;
-        SwitchGun();
+        photonView.RPC("SetGun", RpcTarget.All, selectedGun);
 
         currentHealth = maxHealth;
 
@@ -54,6 +56,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
             
             UIController.instance.healthSlider.maxValue = maxHealth;
             UIController.instance.healthSlider.value = currentHealth;
+        } else {
+            gunHolder.parent = modelGunPoint;
+            gunHolder.localPosition = Vector3.zero;
+            gunHolder.localRotation = Quaternion.identity;
         }
     }
 
@@ -121,19 +127,19 @@ public class PlayerController : MonoBehaviourPunCallbacks
             if (Input.GetAxisRaw("Mouse ScrollWheel") > 0f) {
                 selectedGun++;
                 if (selectedGun >= guns.Length) selectedGun = 0;
-                SwitchGun();
+                photonView.RPC("SetGun", RpcTarget.All, selectedGun);
             }
 
             if (Input.GetAxisRaw("Mouse ScrollWheel") < 0f) {
                 selectedGun--;
                 if (selectedGun < 0) selectedGun = guns.Length - 1;
-                SwitchGun();
+                photonView.RPC("SetGun", RpcTarget.All, selectedGun);
             }
 
             for (int i = 0; i < guns.Length; i++) {
                 if (Input.GetKeyDown((i + 1).ToString())) {
                     selectedGun = i;
-                    SwitchGun();
+                    photonView.RPC("SetGun", RpcTarget.All, selectedGun);
                 }
             }
 
@@ -212,5 +218,13 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         guns[selectedGun].gameObject.SetActive(true);
         guns[selectedGun].muzzleFlash.SetActive(false);
+    }
+
+    [PunRPC]
+    public void SetGun(int gun) {
+        if (gun < guns.Length) {
+            selectedGun = gun;
+            SwitchGun();
+        }
     }
 }
