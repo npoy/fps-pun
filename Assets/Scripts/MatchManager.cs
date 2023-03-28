@@ -14,10 +14,12 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         instance = this;
     }
     
-    public enum EventCodes : byte {
+    private const int maxCodeNumber = 200;
+
+    public enum EventCode : byte {
         NewPlayer,
         ListPlayers,
-        ChangeStat
+        UpdateStat
     }
 
     public List<PlayerInfo> players = new List<PlayerInfo>();
@@ -28,6 +30,8 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         if (!PhotonNetwork.IsConnected) {
             SceneManager.LoadScene(0);
+        } else {
+            NewPlayerSend(PhotonNetwork.NickName);
         }
     }
 
@@ -38,7 +42,23 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
     }
 
     public void OnEvent(EventData photonEvent) {
+        if (photonEvent.Code < maxCodeNumber) {
+            EventCode eventCode = (EventCode)photonEvent.Code;
+            object[] data = (object[])photonEvent.CustomData;
 
+            switch (eventCode)
+            {
+                case EventCode.NewPlayer:
+                    NewPlayerReceive(data);
+                    break;
+                case EventCode.ListPlayers:
+                    ListPlayersReceive(data);
+                    break;
+                case EventCode.UpdateStat:
+                    UpdateStatsReceive(data);
+                    break;     
+            }
+        }
     }
 
     public override void OnEnable()
@@ -49,6 +69,77 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public override void OnDisable()
     {
         PhotonNetwork.RemoveCallbackTarget(this);
+    }
+
+    public void NewPlayerSend(string userName) {
+        object[] package = new object[4];
+        package[0] = userName;
+        package[1] = PhotonNetwork.LocalPlayer.ActorNumber;
+        package[2] = 0;
+        package[3] = 0;
+
+        PhotonNetwork.RaiseEvent(
+            (byte)EventCode.NewPlayer,
+            package,
+            new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient },
+            new SendOptions { Reliability = true }
+        );
+    }
+
+    public void NewPlayerReceive(object[] dataReceived) {
+        PlayerInfo playerInfo = new PlayerInfo((string)dataReceived[0], (int)dataReceived[1], (int)dataReceived[2], (int)dataReceived[3]);
+        players.Add(playerInfo);
+        ListPlayersSend();
+    }
+
+    public void ListPlayersSend() {
+        object[] package = new object[players.Count];
+        for (int i = 0; i < players.Count; i++)
+        {
+            object[] item = new object[4];
+            item[0] = players[i].name;
+            item[1] = players[i].actor;
+            item[2] = players[i].kills;
+            item[3] = players[i].deaths;
+
+            package[i] = item;
+        }
+
+        PhotonNetwork.RaiseEvent(
+            (byte)EventCode.ListPlayers,
+            package,
+            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            new SendOptions { Reliability = true }
+        );
+    }
+
+    public void ListPlayersReceive(object[] dataReceived) {
+        players.Clear();
+        for (int i = 0; i < dataReceived.Length; i++)
+        {
+            object[] item = (object[])dataReceived[i];
+
+            PlayerInfo playerInfo = new PlayerInfo(
+                (string)item[0],
+                (int)item[1],
+                (int)item[2],
+                (int)item[3]
+            );
+
+            players.Add(playerInfo);
+
+            if (PhotonNetwork.LocalPlayer.ActorNumber == playerInfo.actor) {
+                index = i;
+            }
+        }
+    }
+
+    public void UpdateStatsSend() {
+
+    }
+
+    public void UpdateStatsReceive(object[] dataReceived) {
+        
     }
 }
 
