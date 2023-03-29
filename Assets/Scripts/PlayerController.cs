@@ -171,7 +171,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (Physics.Raycast(ray, out RaycastHit raycastHit)) {
             if (raycastHit.collider.gameObject.tag == "Player") {
                 PhotonNetwork.Instantiate(playerHitImpact.name, raycastHit.point, Quaternion.identity);
-                raycastHit.collider.gameObject.GetPhotonView().RPC("DealDamage", RpcTarget.All, photonView.Owner.NickName, guns[selectedGun].shotDamage);
+                raycastHit.collider.gameObject.GetPhotonView().RPC("DealDamage", RpcTarget.All, photonView.Owner.NickName, guns[selectedGun].shotDamage, PhotonNetwork.LocalPlayer.ActorNumber);
             } else {
                 // What if I use Quaternion.identity for the regular shots instead of the lookrotation?
                 GameObject bulletImpactObj = Instantiate(bulletImpact, raycastHit.point + (raycastHit.normal * 0.002f), Quaternion.LookRotation(raycastHit.normal, Vector3.up));
@@ -193,17 +193,19 @@ public class PlayerController : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void DealDamage(string damager, int damageAmount) {
-        TakeDamage(damager, damageAmount);
+    public void DealDamage(string damager, int damageAmount, int actor) {
+        TakeDamage(damager, damageAmount, actor);
     }
 
-    public void TakeDamage(string damager, int damageAmount) {
+    public void TakeDamage(string damager, int damageAmount, int actor) {
         if (photonView.IsMine) {
             currentHealth -= damageAmount;
 
             if (currentHealth <= 0) {
                 currentHealth = 0;
                 PlayerSpawner.instance.Die(damager);
+
+                MatchManager.instance.UpdateStatsSend(actor, 0, 1);
             }
 
             UIController.instance.healthSlider.value = currentHealth;

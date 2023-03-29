@@ -134,12 +134,52 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
-    public void UpdateStatsSend() {
+    public void UpdateStatsSend(int actorSending, int statToUpdate, int amountToChange) {
+        object[] package = new object[] { actorSending, statToUpdate, amountToChange };
 
+        PhotonNetwork.RaiseEvent(
+            (byte)EventCode.UpdateStat,
+            package,
+            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            new SendOptions { Reliability = true }
+        );
     }
 
     public void UpdateStatsReceive(object[] dataReceived) {
-        
+        int updatedActor = (int)dataReceived[0];
+        int updatedStat = (int)dataReceived[1];
+        int updatedAmount = (int)dataReceived[2];
+
+        for (int i = 0; i < players.Count; i++)
+        {
+            if (players[i].actor == updatedActor) {
+                switch (updatedStat)
+                {
+                    case 0:
+                        players[i].kills += updatedAmount;
+                        break;
+                    case 1:
+                        players[i].deaths += updatedAmount;
+                        break;
+                }
+
+                if (i == index) {
+                    UpdateStatsDisplay();
+                }
+
+                break;
+            }
+        }
+    }
+
+    public void UpdateStatsDisplay() {
+        if (players.Count > index) {
+            UIController.instance.killsText.text = "Kills: " + players[index].kills;
+            UIController.instance.deathsText.text = "Deaths: " + players[index].deaths;
+        } else {
+            UIController.instance.killsText.text = "Kills: 0";
+            UIController.instance.deathsText.text = "Deaths: 0";
+        }
     }
 }
 
