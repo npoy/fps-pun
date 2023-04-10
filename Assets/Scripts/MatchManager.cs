@@ -41,6 +41,9 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public bool perpetual;
 
+    public float matchLength = 180f;
+    private float currentMatchTime;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -49,6 +52,7 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         } else {
             NewPlayerSend(PhotonNetwork.NickName);
             currentGameState = GameState.Playing;
+            SetupTimer();
         }
     }
 
@@ -61,6 +65,20 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
             } else {
                 ShowLeaderboard();
             }
+        }
+
+        if (currentMatchTime > 0 && currentGameState == GameState.Playing) {
+            currentMatchTime -= Time.deltaTime;
+            if (currentMatchTime <= 0f) {
+                currentMatchTime = 0;
+                currentGameState = GameState.Ending;
+                if (PhotonNetwork.IsMasterClient) {
+                    ListPlayersSend();
+                    StateCheck();
+                }
+            }
+
+            UpdateTimerDisplay();
         }
     }
 
@@ -362,6 +380,19 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         UpdateStatsDisplay();
         PlayerSpawner.instance.SpawnPlayer();
+        SetupTimer();
+    }
+
+    public void SetupTimer() {
+        if (matchLength > 0) {
+            currentMatchTime = matchLength;
+            UpdateTimerDisplay();
+        }
+    }
+
+    public void UpdateTimerDisplay() {
+        var timeToDisplay = System.TimeSpan.FromSeconds(currentMatchTime);
+        UIController.instance.timerText.text = timeToDisplay.Minutes.ToString("00") + ":" + timeToDisplay.Seconds.ToString("00");
     }
 }
 
