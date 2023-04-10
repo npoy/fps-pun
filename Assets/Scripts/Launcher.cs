@@ -42,6 +42,9 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public GameObject roomTestButton;
 
+    public string[] maps;
+    public bool changeMapBetweenRounds = true;
+
     void Start()
     {
         CloseMenus();
@@ -230,7 +233,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     }
 
     public void StartGame() {
-        PhotonNetwork.LoadLevel(levelToPlay);
+        PhotonNetwork.LoadLevel(maps[Random.Range(0, maps.Length)]);
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
