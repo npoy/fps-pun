@@ -19,13 +19,27 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public enum EventCode : byte {
         NewPlayer,
         ListPlayers,
-        UpdateStat
+        UpdateStat,
+        NextMatch
     }
 
     public List<PlayerInfo> players = new List<PlayerInfo>();
     private int index;
 
     private List<LeaderboardPlayer> leaderboardPlayers = new List<LeaderboardPlayer>();
+
+    public enum GameState {
+        Waiting,
+        Playing,
+        Ending
+    }
+
+    public int killsToWin = 3;
+    public Transform mapCamPoint;
+    public GameState currentGameState = GameState.Waiting;
+    public float waitAfterEnding = 5f;
+
+    public bool perpetual;
 
     // Start is called before the first frame update
     void Start()
@@ -34,13 +48,14 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
             SceneManager.LoadScene(0);
         } else {
             NewPlayerSend(PhotonNetwork.NickName);
+            currentGameState = GameState.Playing;
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Tab)) {
+        if (Input.GetKeyDown(KeyCode.Tab) && currentGameState != GameState.Ending) {
             if (UIController.instance.leaderboard.activeInHierarchy) {
                 UIController.instance.leaderboard.SetActive(false);
             } else {
@@ -64,7 +79,10 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
                     break;
                 case EventCode.UpdateStat:
                     UpdateStatsReceive(data);
-                    break;     
+                    break;
+                case EventCode.NextMatch:
+                    NextMatchReceive();
+                    break;
             }
         }
     }
@@ -101,7 +119,10 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
     }
 
     public void ListPlayersSend() {
-        object[] package = new object[players.Count];
+        object[] package = new object[players.Count + 1];
+
+        package[0] = currentGameState;
+
         for (int i = 0; i < players.Count; i++)
         {
             object[] item = new object[4];
@@ -110,7 +131,7 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
             item[2] = players[i].kills;
             item[3] = players[i].deaths;
 
-            package[i] = item;
+            package[i + 1] = item;
         }
 
         PhotonNetwork.RaiseEvent(
@@ -123,7 +144,10 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void ListPlayersReceive(object[] dataReceived) {
         players.Clear();
-        for (int i = 0; i < dataReceived.Length; i++)
+
+        currentGameState = (GameState)dataReceived[0];
+
+        for (int i = 1; i < dataReceived.Length; i++)
         {
             object[] item = (object[])dataReceived[i];
 
@@ -137,9 +161,11 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
             players.Add(playerInfo);
 
             if (PhotonNetwork.LocalPlayer.ActorNumber == playerInfo.actor) {
-                index = i;
+                index = i - 1;
             }
         }
+
+        StateCheck();
     }
 
     public void UpdateStatsSend(int actorSending, int statToUpdate, int amountToChange) {
@@ -182,6 +208,8 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 break;
             }
         }
+
+        ScoreCheck();
     }
 
     public void UpdateStatsDisplay() {
@@ -237,6 +265,94 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
 
         return sortedPlayers;
+    }
+
+    public override void OnLeftRoom()
+    {
+        base.OnLeftRoom();
+        SceneManager.LoadScene(0);
+    }
+
+    void ScoreCheck() {
+        bool winnerFound = false;
+
+        foreach (PlayerInfo playerInfo in players)
+        {
+            if (playerInfo.kills > killsToWin && killsToWin < 0) {
+                winnerFound = true;
+                break;
+            }
+        }
+
+        if (winnerFound) {
+            if (PhotonNetwork.IsMasterClient && currentGameState != GameState.Ending) {
+                currentGameState = GameState.Ending;
+                ListPlayersSend();
+            }
+        }
+    }
+
+    void StateCheck() {
+        if (currentGameState == GameState.Ending) {
+            EndGame();
+        }
+    }
+
+    void EndGame() {
+        currentGameState = GameState.Ending;
+        if (PhotonNetwork.IsMasterClient) {
+            PhotonNetwork.DestroyAll();
+        }
+
+        UIController.instance.endScreen.SetActive(true);
+        ShowLeaderboard();
+        
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        // Before ending game but after destroying the player
+        Camera.main.transform.position = mapCamPoint.position;
+        Camera.main.transform.rotation = mapCamPoint.rotation;
+        
+        StartCoroutine(EndGameCo());
+    }
+
+    private IEnumerator EndGameCo() {
+        yield return new WaitForSeconds(waitAfterEnding);
+
+        if (!perpetual) {
+            PhotonNetwork.AutomaticallySyncScene = false;
+            PhotonNetwork.LeaveRoom();
+        } else {
+            if (PhotonNetwork.IsMasterClient) {
+                NextMatchSend();
+            }
+        }
+    }
+
+    public void NextMatchSend() {
+        PhotonNetwork.RaiseEvent(
+            (byte)EventCode.NextMatch,
+            null,
+            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            new SendOptions { Reliability = true }
+        );
+    }
+
+    public void NextMatchReceive() {
+        currentGameState = GameState.Playing;
+        
+        UIController.instance.endScreen.SetActive(false);
+        UIController.instance.leaderboard.SetActive(false);
+
+        foreach (PlayerInfo playerInfo in players)
+        {
+            playerInfo.kills = 0;
+            playerInfo.deaths = 0;
+        }
+
+        UpdateStatsDisplay();
+        PlayerSpawner.instance.SpawnPlayer();
     }
 }
 

@@ -20,7 +20,7 @@ public class UIController : MonoBehaviour
     public GameObject leaderboard;
     public LeaderboardPlayer leaderboardPlayer;
 
-    public GameObject endScren;
+    public GameObject endScreen;
 
     private void Awake() {
         instance = this;
