@@ -41,6 +41,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     public Transform modelGunPoint, gunHolder; 
 
+    public Material[] skins;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -61,6 +63,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
             gunHolder.localPosition = Vector3.zero;
             gunHolder.localRotation = Quaternion.identity;
         }
+
+        playerModel.GetComponent<Renderer>().material = skins[photonView.Owner.ActorNumber % skins.Length];
     }
 
     // Update is called once per frame
@@ -150,7 +154,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 Cursor.lockState = CursorLockMode.None;
             }
             
-            if (Input.GetMouseButtonDown(0) && Cursor.lockState == CursorLockMode.None) {
+            if (Input.GetMouseButtonDown(0) && Cursor.lockState == CursorLockMode.None && !UIController.instance.optionsScreen.activeInHierarchy) {
                 Cursor.lockState =  CursorLockMode.Locked;
             }
         }

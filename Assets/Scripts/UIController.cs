@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Photon.Pun;
 
 public class UIController : MonoBehaviour
 {
@@ -24,7 +25,37 @@ public class UIController : MonoBehaviour
 
     public TMP_Text timerText;
 
+    public GameObject optionsScreen;
+
     private void Awake() {
         instance = this;
+    }
+
+    void Update() {
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            ToggleOptions();
+        }
+
+        if (optionsScreen.activeInHierarchy && Cursor.lockState != CursorLockMode.None) {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+    }
+
+    public void ToggleOptions() {
+        if (!optionsScreen.activeInHierarchy) {
+            optionsScreen.SetActive(true);
+        } else {
+            optionsScreen.SetActive(false);
+        }
+    }
+
+    public void ReturnToMainMenu() {
+        PhotonNetwork.AutomaticallySyncScene = false;
+        PhotonNetwork.LeaveRoom();
+    }
+
+    public void QuitGame() {
+        Application.Quit();
     }
 }
