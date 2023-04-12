@@ -45,6 +45,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     public float adsSpeed = 5f;
     public Transform adsOutPoint, adsInPoint;
+    public AudioSource footstepSlow, footstepFast;
 
     // Start is called before the first frame update
     void Start()
@@ -85,6 +86,23 @@ public class PlayerController : MonoBehaviourPunCallbacks
             moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
 
             isRunning = (Input.GetKey(KeyCode.LeftShift)) ? true : false;
+
+            if (isRunning) {
+                if (!footstepFast.isPlaying && moveDirection != Vector3.zero) {
+                    footstepFast.Play();
+                    footstepSlow.Stop();
+                };
+            } else {
+                if (!footstepSlow.isPlaying && moveDirection != Vector3.zero) {
+                    footstepFast.Stop();
+                    footstepSlow.Play();
+                };
+            }
+
+            if (moveDirection == Vector3.zero || !isGrounded) {
+                footstepFast.Stop();
+                footstepSlow.Stop();
+            }
 
             float currentY = movement.y;
             movement = Vector3.Normalize((transform.forward * moveDirection.z) + (transform.right * moveDirection.x)) * ((isRunning) ? runSpeed : moveSpeed);
@@ -210,6 +228,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         guns[selectedGun].muzzleFlash.SetActive(true);
         muzzleCounter = muzzleDisplayTime;
+
+        guns[selectedGun].shotSound.Stop();
+        guns[selectedGun].shotSound.Play();
     }
 
     [PunRPC]
