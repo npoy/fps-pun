@@ -43,6 +43,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     public Material[] skins;
 
+    public float adsSpeed = 5f;
+    public Transform adsOutPoint, adsInPoint;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -149,6 +152,14 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
             anim.SetBool("grounded", isGrounded);
             anim.SetFloat("speed", moveDirection.magnitude);
+
+            if (Input.GetMouseButton(1)) {
+                mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, guns[selectedGun].adsZoom, adsSpeed * Time.deltaTime);
+                gunHolder.position = Vector3.Lerp(gunHolder.position, adsInPoint.position, adsSpeed * Time.deltaTime);
+            } else {
+                mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, 60f, adsSpeed * Time.deltaTime);
+                gunHolder.position = Vector3.Lerp(gunHolder.position, adsOutPoint.position, adsSpeed * Time.deltaTime);
+            }
 
             if (Input.GetKeyDown(KeyCode.Escape)) {
                 Cursor.lockState = CursorLockMode.None;
