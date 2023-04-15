@@ -42,7 +42,7 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public bool perpetual;
 
-    public float matchLength = 180f;
+    public float matchLength = 30f;
     private float currentMatchTime;
     private float sendTimer;
 
@@ -76,7 +76,10 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         if (PhotonNetwork.IsMasterClient) {
             if (currentMatchTime > 0 && currentGameState == GameState.Playing) {
                 currentMatchTime -= Time.deltaTime;
+                Debug.Log(currentMatchTime);
+                Debug.Log(currentMatchTime <= 0f);
                 if (currentMatchTime <= 0f) {
+                    Debug.Log("Entro");
                     currentMatchTime = 0;
                     currentGameState = GameState.Ending;
                     ListPlayersSend();
@@ -310,9 +313,8 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         foreach (PlayerInfo playerInfo in players)
         {
-            if (playerInfo.kills > killsToWin && killsToWin < 0) {
+            if (playerInfo.kills > killsToWin && killsToWin > 0) {
                 winnerFound = true;
-                break;
             }
         }
 

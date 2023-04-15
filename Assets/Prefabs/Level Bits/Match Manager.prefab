@@ -49,3 +49,4 @@ MonoBehaviour:
   currentGameState: 0
   waitAfterEnding: 5
   perpetual: 0
+  matchLength: 30
