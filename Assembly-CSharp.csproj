@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{e0c2a39d-f63f-bf1b-cf0d-9ea0f30a3142}</ProjectGuid>
+    <ProjectGuid>{f618f21e-893e-1b87-ca1d-37feb6f8e3be}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -301,13 +301,13 @@
         <HintPath>C:\Program Files\Unity\Hub\Editor\2020.3.27f1\Editor\Data\Managed\UnityEngine\UnityEditor.UnityConnectModule.dll</HintPath>
     </Reference>
     <Reference Include="websocket-sharp">
-        <HintPath>C:\GitRepos\fps-poc\Assets\Photon\PhotonLibs\WebSocket\websocket-sharp.dll</HintPath>
+        <HintPath>C:\GitRepos\fps-pun\Assets\Photon\PhotonLibs\WebSocket\websocket-sharp.dll</HintPath>
     </Reference>
     <Reference Include="Photon3Unity3D">
-        <HintPath>C:\GitRepos\fps-poc\Assets\Photon\PhotonLibs\netstandard2.0\Photon3Unity3D.dll</HintPath>
+        <HintPath>C:\GitRepos\fps-pun\Assets\Photon\PhotonLibs\netstandard2.0\Photon3Unity3D.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-        <HintPath>C:\GitRepos\fps-poc\Library\PackageCache\com.unity.nuget.newtonsoft-json@2.0.0\Runtime\Newtonsoft.Json.dll</HintPath>
+        <HintPath>C:\GitRepos\fps-pun\Library\PackageCache\com.unity.nuget.newtonsoft-json@2.0.0\Runtime\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
         <HintPath>C:\Program Files\Unity\Hub\Editor\2020.3.27f1\Editor\Data\NetStandard\ref\2.0.0\netstandard.dll</HintPath>
@@ -655,63 +655,63 @@
         <HintPath>C:\Program Files\Unity\Hub\Editor\2020.3.27f1\Editor\Data\NetStandard\compat\2.0.0\shims\netfx\System.Xml.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VSCode.Editor">
-        <HintPath>C:\GitRepos\fps-poc\Library\ScriptAssemblies\Unity.VSCode.Editor.dll</HintPath>
+        <HintPath>C:\GitRepos\fps-pun\Library\ScriptAssemblies\Unity.VSCode.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
-        <HintPath>C:\GitRepos\fps-poc\Library\ScriptAssemblies\Unity.TextMeshPro.Editor.dll</HintPath>
+        <HintPath>C:\GitRepos\fps-pun\Library\ScriptAssemblies\Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualStudio.Editor">
-        <HintPath>C:\GitRepos\fps-poc\Library\ScriptAssemblies\Unity.VisualStudio.Editor.dll</HintPath>
+        <HintPath>C:\GitRepos\fps-pun\Library\ScriptAssemblies\Unity.VisualStudio.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Timeline.Editor">
-        <HintPath>C:\GitRepos\fps-poc\Library\ScriptAssemblies\Unity.Timeline.Editor.dll</HintPath>
+        <HintPath>C:\GitRepos\fps-pun\Library\ScriptAssemblies\Unity.Timeline.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Timeline">
-        <HintPath>C:\GitRepos\fps-poc\Library\ScriptAssemblies\Unity.Timeline.dll</HintPath>
+        <HintPath>C:\GitRepos\fps-pun\Library\ScriptAssemblies\Unity.Timeline.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-        <HintPath>C:\GitRepos\fps-poc\Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
+        <HintPath>C:\GitRepos\fps-pun\Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.UI">
-        <HintPath>C:\GitRepos\fps-poc\Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
+        <HintPath>C:\GitRepos\fps-pun\Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PlasticSCM.Editor">
-        <HintPath>C:\GitRepos\fps-poc\Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
+        <HintPath>C:\GitRepos\fps-pun\Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Rider.Editor">
-        <HintPath>C:\GitRepos\fps-poc\Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
+        <HintPath>C:\GitRepos\fps-pun\Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-        <HintPath>C:\GitRepos\fps-poc\Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
+        <HintPath>C:\GitRepos\fps-pun\Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="PhotonUnityNetworking.csproj">
-      <Project>{b87c77be-3980-eb51-93ce-f514b48bd142}</Project>
+      <Project>{9cc49120-e271-aeba-7289-f541a5b15c1b}</Project>
       <Name>PhotonUnityNetworking</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonChat.csproj">
-      <Project>{3c55fa4b-e603-1630-7fb8-8c7388aca6ac}</Project>
+      <Project>{56543583-fd21-064f-bf25-3d479581c1ae}</Project>
       <Name>PhotonChat</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Editor.csproj">
-      <Project>{2a4c660a-56ab-76d4-a68f-3def6bb9c497}</Project>
+      <Project>{4945b0ac-3222-c434-597c-2669e02a4853}</Project>
       <Name>PhotonUnityNetworking.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.PhotonPlayer.Editor.csproj">
-      <Project>{6654737c-15b0-74ad-3f33-9c295cc823e2}</Project>
+      <Project>{92cd9d08-5767-58a5-71bc-03ee0242e6c2}</Project>
       <Name>PhotonUnityNetworking.Utilities.PhotonPlayer.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonRealtime.csproj">
-      <Project>{fe3cb09e-8a39-b395-883e-10ea0af1aa53}</Project>
+      <Project>{78346435-d3ea-ac77-95e3-5d7aa1acffb8}</Project>
       <Name>PhotonRealtime</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.csproj">
-      <Project>{6ffc27f8-0706-2dd2-5d47-c5e78fff9708}</Project>
+      <Project>{5e48d66f-6644-7153-00d1-91267600e798}</Project>
       <Name>PhotonUnityNetworking.Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.Culling.Editor.csproj">
-      <Project>{744eec4d-5c53-79eb-2a54-6f89f15d5fae}</Project>
+      <Project>{95d6f271-2984-6715-a5e4-87465bec8548}</Project>
       <Name>PhotonUnityNetworking.Utilities.Culling.Editor</Name>
     </ProjectReference>
   </ItemGroup>
